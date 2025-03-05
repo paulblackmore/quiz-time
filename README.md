@@ -1,1 +1,1 @@
-- Building a quize game to practive multi step forms wth react form hook
+- Building a quiz game to practice multi step forms wth react form hook

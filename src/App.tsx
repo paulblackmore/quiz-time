@@ -86,7 +86,12 @@ function App() {
               disabled={findQuestionIndex(question.id) === questions.length - 1}
               onClick={() => {
                 const index = findQuestionIndex(question.id);
-                setQuestion(questions[index + 1]);
+
+                if (index === questions.length - 1) {
+                  // submit form
+                } else {
+                  setQuestion(questions[index + 1]);
+                }
               }}
             >
               Next

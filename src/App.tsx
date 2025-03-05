@@ -1,7 +1,8 @@
 import { PropsWithChildren, useState } from 'react';
+import { v4 as uuid } from 'uuid';
 
 type Question = {
-  id: number;
+  id: string;
   question: string;
   options: string[];
   answer: string;
@@ -12,30 +13,30 @@ type QuestionProps = {
   question: Question;
 };
 
-const dummy_questions: Question[] = [
+const questions: Question[] = [
   {
-    id: 1,
+    id: uuid(),
     question: 'A long strig of text and this What is 2 + 2?',
     options: ['1', '2', '3', '4'],
     answer: '4',
     bgColor: 'blue',
   },
   {
-    id: 2,
+    id: uuid(),
     question: 'What is 3 + 3?',
     options: ['1', '2', '3', '4'],
     answer: '6',
     bgColor: 'green',
   },
   {
-    id: 3,
+    id: uuid(),
     question: 'What is 4 + 4?',
     options: ['1', '2', '3', '4'],
     answer: '8',
     bgColor: 'yellow',
   },
   {
-    id: 4,
+    id: uuid(),
     question: 'What is 5 + 5?',
     options: ['1', '2', '3', '4'],
     answer: '10',
@@ -62,7 +63,10 @@ const Question = ({ children, question }: PropsWithChildren<QuestionProps>) => {
 };
 
 function App() {
-  const [question, setQuestion] = useState(dummy_questions[0]);
+  const [question, setQuestion] = useState<Question>(questions[0]);
+
+  const findQuestionIndex = (id: string): number =>
+    questions.findIndex((q) => q.id === id);
 
   return (
     <div>
@@ -70,11 +74,21 @@ function App() {
         <div className='col-span-2 h-12'>
           <div className='flex justify-between items-center'>
             <button
-              onClick={() => setQuestion(dummy_questions[question.id - 1])}
+              disabled={findQuestionIndex(question.id) === 0}
+              onClick={() => {
+                const index = findQuestionIndex(question.id);
+                setQuestion(questions[index - 1]);
+              }}
             >
               Back
             </button>
-            <button onClick={() => setQuestion(dummy_questions[question.id])}>
+            <button
+              disabled={findQuestionIndex(question.id) === questions.length - 1}
+              onClick={() => {
+                const index = findQuestionIndex(question.id);
+                setQuestion(questions[index + 1]);
+              }}
+            >
               Next
             </button>
           </div>

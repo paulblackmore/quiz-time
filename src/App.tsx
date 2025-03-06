@@ -1,4 +1,4 @@
-import { PropsWithChildren, useState } from 'react';
+import { useState } from 'react';
 import { v4 as uuid } from 'uuid';
 import { useQuery } from '@tanstack/react-query';
 
@@ -10,16 +10,12 @@ type Question = {
   bgColor: string;
 };
 
-type Props = {
-  question: Question | undefined;
-};
-
-type FormNavigationSectionProps = {
-  questionId: string | undefined;
+type FormNavFooter = {
+  questionId: string;
   setQuestionIndex: (index: number) => void;
 };
 
-type NavigationButtonProps = {
+type ButtonProps = {
   isDisabled: boolean;
   handleClick: () => void;
   label: string;
@@ -78,6 +74,14 @@ const questions: Question[] = [
   },
 ];
 
+const backgroundConfig: { [key: string]: string } = {
+  blue: 'bg-blue-500',
+  green: 'bg-green-500',
+  yellow: 'bg-yellow-500',
+  orange: 'bg-orange-500',
+  purple: 'bg-purple-500',
+};
+
 const fetchQuestions = () => {
   return new Promise<Question[]>((resolve, reject) => {
     const req = new XMLHttpRequest();
@@ -95,72 +99,55 @@ const fetchQuestions = () => {
   });
 };
 
-const Loading = () => (
-  <div className='flex justify-center items-center h-screen'>
-    Loading your data...
-  </div>
+const FallbackDisplay = ({ text }: { text: string }) => (
+  <div className='flex justify-center items-center h-screen'>{text}</div>
 );
 
-const Error = () => (
-  <div className='flex justify-center items-center h-screen'>
-    Error while fetching your data
-  </div>
-);
-
-const NoQuestions = () => (
-  <div className='flex justify-center items-center h-screen'>
-    No questions have been added
-  </div>
-);
-
-const Question = ({ children, question }: PropsWithChildren<Props>) => {
-  const backgroundConfig: { [key: string]: string } = {
-    blue: 'bg-blue-500',
-    green: 'bg-green-500',
-    yellow: 'bg-yellow-500',
-    orange: 'bg-orange-500',
-    purple: 'bg-purple-500',
-  };
-  const bgColor = `${
-    question ? backgroundConfig[question.bgColor] : 'bg-slate-200'
-  }`;
-
-  return question ? (
-    <div className={`flex justify-center items-center h-screen ${bgColor}`}>
-      <div className='grid grid-cols-2 gap-4 w-200'>
-        <div className='h-100 p-10'>
-          <h3 className='font-bold text-3xl'>{question.question}</h3>
-        </div>
-        <div className='h-100 p-10'>
-          <h3 className='font-bold text-3xl'>{question.answer}</h3>
-        </div>
-        {children}
-      </div>
-    </div>
-  ) : null;
-};
-
-const NavigationButton = ({
-  isDisabled,
-  handleClick,
-  label,
-}: NavigationButtonProps) => (
+const Button = ({ isDisabled, handleClick, label }: ButtonProps) => (
   <button disabled={isDisabled} onClick={handleClick}>
     {label}
   </button>
 );
 
-const FormNavigationSection = ({
-  questionId,
-  setQuestionIndex,
-}: FormNavigationSectionProps) => {
+const Question = ({ question }: { question: string }) => (
+  <div className='h-100 p-10'>
+    <h3 className='font-bold text-3xl'>{question}</h3>
+  </div>
+);
+
+const Option = ({ option }: { option: string }) => (
+  <div className='flex items-center'>
+    <input
+      id={option}
+      type='checkbox'
+      value=''
+      className='w-6 h-6 rounded-sm'
+    />
+    <label
+      htmlFor={option}
+      className='ms-2 text-sm font-medium text-gray-900 dark:text-gray-300'
+    >
+      {option}
+    </label>
+  </div>
+);
+
+const Options = ({ options }: { options: string[] }) => (
+  <div className='flex flex-col gap-4 h-100 p-10'>
+    {options.map((option) => (
+      <Option key={option} option={option} />
+    ))}
+  </div>
+);
+
+const FormNavFooter = ({ questionId, setQuestionIndex }: FormNavFooter) => {
   const findQuestionIndex = (id: string): number =>
     questions.findIndex((q) => q.id === id);
 
-  return questionId ? (
+  return (
     <div className='col-span-2 h-12'>
       <div className='flex justify-between items-center'>
-        <NavigationButton
+        <Button
           isDisabled={findQuestionIndex(questionId) === 0}
           handleClick={() => {
             const index = findQuestionIndex(questionId);
@@ -168,7 +155,7 @@ const FormNavigationSection = ({
           }}
           label='Back'
         />
-        <NavigationButton
+        <Button
           isDisabled={findQuestionIndex(questionId) === questions.length - 1}
           handleClick={() => {
             const index = findQuestionIndex(questionId);
@@ -183,7 +170,7 @@ const FormNavigationSection = ({
         />
       </div>
     </div>
-  ) : null;
+  );
 };
 
 function App() {
@@ -197,19 +184,28 @@ function App() {
     queryFn: fetchQuestions,
   });
 
+  const question = questions?.[questionIndex];
+  const bgColor = `${
+    question ? backgroundConfig[question.bgColor] : 'bg-slate-200'
+  }`;
+
   return isLoading ? (
-    <Loading />
+    <FallbackDisplay text='Loading your data...' />
   ) : isError ? (
-    <Error />
-  ) : questions?.length ? (
-    <Question question={questions[questionIndex]}>
-      <FormNavigationSection
-        questionId={questions[questionIndex].id}
-        setQuestionIndex={setQuestionIndex}
-      />
-    </Question>
+    <FallbackDisplay text='Error while fetching your data' />
+  ) : question ? (
+    <div className={`flex justify-center items-center h-screen ${bgColor}`}>
+      <div className='grid grid-cols-2 gap-4 w-200'>
+        <Question question={question.question} />
+        <Options options={question.options} />
+        <FormNavFooter
+          questionId={question.id}
+          setQuestionIndex={setQuestionIndex}
+        />
+      </div>
+    </div>
   ) : (
-    <NoQuestions />
+    <FallbackDisplay text='No questions have been added' />
   );
 }
 

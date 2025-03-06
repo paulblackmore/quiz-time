@@ -72,10 +72,19 @@ const questions: Question[] = [
 ];
 
 const fetchQuestions = () => {
-  return new Promise<Question[]>((resolve) => {
-    setTimeout(() => {
-      resolve(questions);
-    }, 1000);
+  return new Promise<Question[]>((resolve, reject) => {
+    const req = new XMLHttpRequest();
+    req.open('GET', '');
+    req.onload = () => {
+      if (req.status == 200) {
+        setTimeout(() => {
+          resolve(questions);
+        }, 2000);
+      } else {
+        reject('There is an Error!');
+      }
+    };
+    req.send();
   });
 };
 
@@ -135,11 +144,23 @@ const NavigationButtons = ({
   ) : null;
 };
 
-const Loading = () => <div>Loading...</div>;
+const Loading = () => (
+  <div className='flex justify-center items-center h-screen'>
+    Loading your data...
+  </div>
+);
 
-const Error = () => <div>Error</div>;
+const Error = () => (
+  <div className='flex justify-center items-center h-screen'>
+    Error while fetching your data
+  </div>
+);
 
-const NoQuestions = () => <div>No questions</div>;
+const NoQuestions = () => (
+  <div className='flex justify-center items-center h-screen'>
+    No questions have been added
+  </div>
+);
 
 function App() {
   const [questionIndex, setQuestionIndex] = useState(0);

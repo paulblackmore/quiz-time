@@ -14,9 +14,15 @@ type Props = {
   question: Question | undefined;
 };
 
-type NavigationButtonsProps = {
+type FormNavigationButtonsProps = {
   questionId: string | undefined;
   setQuestionIndex: (index: number) => void;
+};
+
+type NavigationButtonProps = {
+  isDisabled: boolean;
+  handleClick: () => void;
+  label: string;
 };
 
 const questions: Question[] = [
@@ -125,28 +131,37 @@ const Question = ({ children, question }: PropsWithChildren<Props>) => {
   ) : null;
 };
 
-const NavigationButtons = ({
+const NavigationButton = ({
+  isDisabled,
+  handleClick,
+  label,
+}: NavigationButtonProps) => (
+  <button disabled={isDisabled} onClick={handleClick}>
+    {label}
+  </button>
+);
+
+const FormNavigationButtons = ({
   questionId,
   setQuestionIndex,
-}: NavigationButtonsProps) => {
+}: FormNavigationButtonsProps) => {
   const findQuestionIndex = (id: string): number =>
     questions.findIndex((q) => q.id === id);
 
   return questionId ? (
     <div className='col-span-2 h-12'>
       <div className='flex justify-between items-center'>
-        <button
-          disabled={findQuestionIndex(questionId) === 0}
-          onClick={() => {
+        <NavigationButton
+          isDisabled={findQuestionIndex(questionId) === 0}
+          handleClick={() => {
             const index = findQuestionIndex(questionId);
             setQuestionIndex(index - 1);
           }}
-        >
-          Back
-        </button>
-        <button
-          disabled={findQuestionIndex(questionId) === questions.length - 1}
-          onClick={() => {
+          label='Back'
+        />
+        <NavigationButton
+          isDisabled={findQuestionIndex(questionId) === questions.length - 1}
+          handleClick={() => {
             const index = findQuestionIndex(questionId);
 
             if (index === questions.length - 1) {
@@ -155,9 +170,8 @@ const NavigationButtons = ({
               setQuestionIndex(index + 1);
             }
           }}
-        >
-          Next
-        </button>
+          label='Next'
+        />
       </div>
     </div>
   ) : null;
@@ -180,9 +194,9 @@ function App() {
         <Loading />
       ) : isError ? (
         <Error />
-      ) : questions?.length ? (
+      ) : questions && questions.length ? (
         <Question question={questions[questionIndex]}>
-          <NavigationButtons
+          <FormNavigationButtons
             questionId={questions[questionIndex].id}
             setQuestionIndex={setQuestionIndex}
           />

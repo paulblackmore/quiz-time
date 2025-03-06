@@ -89,6 +89,24 @@ const fetchQuestions = () => {
   });
 };
 
+const Loading = () => (
+  <div className='flex justify-center items-center h-screen'>
+    Loading your data...
+  </div>
+);
+
+const Error = () => (
+  <div className='flex justify-center items-center h-screen'>
+    Error while fetching your data
+  </div>
+);
+
+const NoQuestions = () => (
+  <div className='flex justify-center items-center h-screen'>
+    No questions have been added
+  </div>
+);
+
 const Question = ({ children, question }: PropsWithChildren<Props>) => {
   return question ? (
     <div
@@ -144,24 +162,6 @@ const NavigationButtons = ({
     </div>
   ) : null;
 };
-
-const Loading = () => (
-  <div className='flex justify-center items-center h-screen'>
-    Loading your data...
-  </div>
-);
-
-const Error = () => (
-  <div className='flex justify-center items-center h-screen'>
-    Error while fetching your data
-  </div>
-);
-
-const NoQuestions = () => (
-  <div className='flex justify-center items-center h-screen'>
-    No questions have been added
-  </div>
-);
 
 function App() {
   const [questionIndex, setQuestionIndex] = useState(0);

@@ -14,7 +14,8 @@ type Props = {
   question: Question | undefined;
 };
 
-type NavigationButtonsProps = Props & {
+type NavigationButtonsProps = {
+  questionId: string | undefined;
   setQuestionIndex: (index: number) => void;
 };
 
@@ -107,28 +108,28 @@ const Question = ({ children, question }: PropsWithChildren<Props>) => {
 };
 
 const NavigationButtons = ({
-  question,
+  questionId,
   setQuestionIndex,
 }: NavigationButtonsProps) => {
   const findQuestionIndex = (id: string): number =>
     questions.findIndex((q) => q.id === id);
 
-  return question ? (
+  return questionId ? (
     <div className='col-span-2 h-12'>
       <div className='flex justify-between items-center'>
         <button
-          disabled={findQuestionIndex(question.id) === 0}
+          disabled={findQuestionIndex(questionId) === 0}
           onClick={() => {
-            const index = findQuestionIndex(question.id);
+            const index = findQuestionIndex(questionId);
             setQuestionIndex(index - 1);
           }}
         >
           Back
         </button>
         <button
-          disabled={findQuestionIndex(question.id) === questions.length - 1}
+          disabled={findQuestionIndex(questionId) === questions.length - 1}
           onClick={() => {
-            const index = findQuestionIndex(question.id);
+            const index = findQuestionIndex(questionId);
 
             if (index === questions.length - 1) {
               // submit form
@@ -182,7 +183,7 @@ function App() {
       ) : questions?.length ? (
         <Question question={questions[questionIndex]}>
           <NavigationButtons
-            question={questions[questionIndex]}
+            questionId={questions[questionIndex].id}
             setQuestionIndex={setQuestionIndex}
           />
         </Question>

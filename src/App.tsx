@@ -10,7 +10,7 @@ type QuestionType = {
   bgColor: string;
 };
 
-type FooterProps = {
+type FormNavProps = {
   questionId: string;
   setQuestionIndex: (index: number) => void;
 };
@@ -74,7 +74,7 @@ const questions: QuestionType[] = [
   },
 ];
 
-const backgroundConfig: { [key: string]: string } = {
+const bgColorConfig: { [key: string]: string } = {
   blue: 'bg-blue-800',
   green: 'bg-green-800',
   slate: 'bg-slate-800',
@@ -84,18 +84,14 @@ const backgroundConfig: { [key: string]: string } = {
 
 const fetchQuestions = (): Promise<QuestionType[]> => {
   return new Promise<QuestionType[]>((resolve, reject) => {
-    const req = new XMLHttpRequest();
-    req.open('GET', '');
-    req.onload = () => {
-      if (req.status == 200) {
-        setTimeout(() => {
-          resolve(questions);
-        }, 2000);
-      } else {
-        reject('There is an Error!');
-      }
-    };
-    req.send();
+    const status = 200;
+    if (status == 200) {
+      setTimeout(() => {
+        resolve(questions);
+      }, 2000);
+    } else {
+      reject('There is an Error!');
+    }
   });
 };
 
@@ -121,15 +117,15 @@ const Question = ({ question }: { question: string }) => (
 );
 
 const OptionItem = ({ option }: { option: string }) => (
-  <div className='flex  justify-between items-center'>
-    <label htmlFor={option} className='ms-2 text-lg'>
+  <div className='flex justify-between items-center'>
+    <label htmlFor={option} className='text-lg'>
       {option}
     </label>
     <input id={option} type='checkbox' className='w-6 h-6 rounded-sm' />
   </div>
 );
 
-const OptionList = ({ options }: { options: string[] }) => (
+const OptionsList = ({ options }: { options: string[] }) => (
   <div className='flex flex-col gap-4 h-100'>
     {options.map((option) => (
       <OptionItem key={option} option={option} />
@@ -137,12 +133,12 @@ const OptionList = ({ options }: { options: string[] }) => (
   </div>
 );
 
-const Footer = ({ questionId, setQuestionIndex }: FooterProps) => {
+const FormNav = ({ questionId, setQuestionIndex }: FormNavProps) => {
   const findQuestionIndex = (id: string): number =>
     questions.findIndex((q) => q.id === id);
 
   return (
-    <div className='col-span-2 h-12'>
+    <div className='col-span-2'>
       <div className='flex justify-between items-center'>
         <Button
           isDisabled={findQuestionIndex(questionId) === 0}
@@ -156,11 +152,8 @@ const Footer = ({ questionId, setQuestionIndex }: FooterProps) => {
           isDisabled={findQuestionIndex(questionId) === questions.length - 1}
           handleClick={() => {
             const index = findQuestionIndex(questionId);
-            if (index === questions.length - 1) {
-              // submit form
-            } else {
-              setQuestionIndex(index + 1);
-            }
+            if (index === questions.length - 1) return; // submit form
+            else setQuestionIndex(index + 1);
           }}
           label='Next'
         />
@@ -187,11 +180,11 @@ function App() {
   ) : isError ? (
     <CenteredElement>Error while fetching your data</CenteredElement>
   ) : question ? (
-    <CenteredElement bgColor={backgroundConfig[question.bgColor]}>
+    <CenteredElement bgColor={bgColorConfig[question.bgColor]}>
       <div className='grid grid-cols-2 gap-8 w-200'>
         <Question question={question.question} />
-        <OptionList options={question.options} />
-        <Footer questionId={question.id} setQuestionIndex={setQuestionIndex} />
+        <OptionsList options={question.options} />
+        <FormNav questionId={question.id} setQuestionIndex={setQuestionIndex} />
       </div>
     </CenteredElement>
   ) : (

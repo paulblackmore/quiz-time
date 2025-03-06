@@ -168,7 +168,7 @@ const FormNav = ({ questionId, setQuestionIndex }: FormNavProps) => {
   );
 };
 
-function App() {
+export default function App() {
   const [questionIndex, setQuestionIndex] = useState(0);
   const {
     data: questions,
@@ -197,5 +197,3 @@ function App() {
     <CenteredElement>Sorry, question can not be found</CenteredElement>
   );
 }
-
-export default App;

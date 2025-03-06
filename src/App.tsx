@@ -1,5 +1,6 @@
 import { PropsWithChildren, useState } from 'react';
 import { v4 as uuid } from 'uuid';
+import { useQuery } from '@tanstack/react-query';
 
 type Question = {
   id: string;
@@ -9,8 +10,12 @@ type Question = {
   bgColor: string;
 };
 
-type QuestionProps = {
-  question: Question;
+type Props = {
+  question: Question | undefined;
+};
+
+type NavigationButtonsProps = Props & {
+  setQuestionIndex: (index: number) => void;
 };
 
 const questions: Question[] = [
@@ -44,8 +49,16 @@ const questions: Question[] = [
   },
 ];
 
-const Question = ({ children, question }: PropsWithChildren<QuestionProps>) => {
-  return (
+const fetchQuestions = () => {
+  return new Promise<Question[]>((resolve) => {
+    setTimeout(() => {
+      resolve(questions);
+    }, 1000);
+  });
+};
+
+const Question = ({ children, question }: PropsWithChildren<Props>) => {
+  return question ? (
     <div
       className={`flex justify-center items-center h-screen bg-linear-to-br from-${question.bgColor}-500 to-slate-200`}
     >
@@ -59,46 +72,80 @@ const Question = ({ children, question }: PropsWithChildren<QuestionProps>) => {
         {children}
       </div>
     </div>
-  );
+  ) : null;
 };
 
-function App() {
-  const [question, setQuestion] = useState<Question>(questions[0]);
-
+const NavigationButtons = ({
+  question,
+  setQuestionIndex,
+}: NavigationButtonsProps) => {
   const findQuestionIndex = (id: string): number =>
     questions.findIndex((q) => q.id === id);
 
+  return question ? (
+    <div className='col-span-2 h-12'>
+      <div className='flex justify-between items-center'>
+        <button
+          disabled={findQuestionIndex(question.id) === 0}
+          onClick={() => {
+            const index = findQuestionIndex(question.id);
+            setQuestionIndex(index - 1);
+          }}
+        >
+          Back
+        </button>
+        <button
+          disabled={findQuestionIndex(question.id) === questions.length - 1}
+          onClick={() => {
+            const index = findQuestionIndex(question.id);
+
+            if (index === questions.length - 1) {
+              // submit form
+            } else {
+              setQuestionIndex(index + 1);
+            }
+          }}
+        >
+          Next
+        </button>
+      </div>
+    </div>
+  ) : null;
+};
+
+const Loading = () => <div>Loading...</div>;
+
+const Error = () => <div>Error</div>;
+
+const NoQuestions = () => <div>No questions</div>;
+
+function App() {
+  const [questionIndex, setQuestionIndex] = useState(0);
+  const {
+    data: questions,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ['questions'],
+    queryFn: fetchQuestions,
+  });
+
   return (
     <div>
-      <Question question={question}>
-        <div className='col-span-2 h-12'>
-          <div className='flex justify-between items-center'>
-            <button
-              disabled={findQuestionIndex(question.id) === 0}
-              onClick={() => {
-                const index = findQuestionIndex(question.id);
-                setQuestion(questions[index - 1]);
-              }}
-            >
-              Back
-            </button>
-            <button
-              disabled={findQuestionIndex(question.id) === questions.length - 1}
-              onClick={() => {
-                const index = findQuestionIndex(question.id);
-
-                if (index === questions.length - 1) {
-                  // submit form
-                } else {
-                  setQuestion(questions[index + 1]);
-                }
-              }}
-            >
-              Next
-            </button>
-          </div>
-        </div>
-      </Question>
+      {isLoading ? (
+        <Loading />
+      ) : isError ? (
+        <Error />
+      ) : questions?.length ? (
+        <Question question={questions[questionIndex]}>
+          <NavigationButtons
+            question={questions[questionIndex]}
+            setQuestionIndex={setQuestionIndex}
+          />
+        </Question>
+      ) : (
+        <NoQuestions />
+      )}
     </div>
   );
 }

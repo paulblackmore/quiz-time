@@ -195,7 +195,7 @@ function App() {
       </div>
     </CenteredElement>
   ) : (
-    <CenteredElement>No questions have been added</CenteredElement>
+    <CenteredElement>Sorry, question can not be found</CenteredElement>
   );
 }
 

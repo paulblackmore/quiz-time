@@ -10,7 +10,7 @@ type QuestionType = {
   bgColor: string;
 };
 
-type FormNavProps = {
+type FormFooterProps = {
   questionId: string;
   setQuestionIndex: (index: number) => void;
 };
@@ -139,7 +139,7 @@ const OptionsList = ({ options }: OptionsListProps) => (
   </div>
 );
 
-const FormNav = ({ questionId, setQuestionIndex }: FormNavProps) => {
+const FormFooter = ({ questionId, setQuestionIndex }: FormFooterProps) => {
   const findQuestionIndex = (id: string): number =>
     questions.findIndex((q) => q.id === id);
 
@@ -190,7 +190,10 @@ export default function App() {
       <div className='grid grid-cols-2 gap-8 w-200'>
         <Question question={question.question} />
         <OptionsList options={question.options} />
-        <FormNav questionId={question.id} setQuestionIndex={setQuestionIndex} />
+        <FormFooter
+          questionId={question.id}
+          setQuestionIndex={setQuestionIndex}
+        />
       </div>
     </CenteredElement>
   ) : (

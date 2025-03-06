@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { PropsWithChildren, useState } from 'react';
 import { v4 as uuid } from 'uuid';
 import { useQuery } from '@tanstack/react-query';
 
@@ -58,7 +58,7 @@ const questions: QuestionType[] = [
     question: 'In which HTML tag do we put the JavaScript code?',
     options: ['<js>', '<scripting>', '<script>', '<javascript>'],
     answer: '<script>',
-    bgColor: 'red',
+    bgColor: 'teal',
   },
   {
     id: uuid(),
@@ -78,7 +78,7 @@ const backgroundConfig: { [key: string]: string } = {
   blue: 'bg-blue-800',
   green: 'bg-green-800',
   slate: 'bg-slate-800',
-  red: 'bg-red-800',
+  teal: 'bg-teal-800',
   purple: 'bg-purple-800',
 };
 
@@ -99,8 +99,13 @@ const fetchQuestions = (): Promise<QuestionType[]> => {
   });
 };
 
-const FallbackDisplay = ({ text }: { text: string }) => (
-  <div className='flex justify-center items-center h-screen'>{text}</div>
+const CenteredElement = ({
+  children,
+  bgColor = 'bg-pink-400',
+}: PropsWithChildren<{ bgColor?: string }>) => (
+  <div className={`flex justify-center items-center h-screen ${bgColor}`}>
+    {children}
+  </div>
 );
 
 const Button = ({ isDisabled, handleClick, label }: ButtonProps) => (
@@ -110,12 +115,12 @@ const Button = ({ isDisabled, handleClick, label }: ButtonProps) => (
 );
 
 const Question = ({ question }: { question: string }) => (
-  <div className='h-100 p-10'>
+  <div className='h-100'>
     <h3 className='font-bold text-3xl'>{question}</h3>
   </div>
 );
 
-const Option = ({ option }: { option: string }) => (
+const OptionItem = ({ option }: { option: string }) => (
   <div className='flex  justify-between items-center'>
     <label htmlFor={option} className='ms-2 text-lg'>
       {option}
@@ -124,15 +129,15 @@ const Option = ({ option }: { option: string }) => (
   </div>
 );
 
-const Options = ({ options }: { options: string[] }) => (
-  <div className='flex flex-col gap-4 h-100 p-10'>
+const OptionList = ({ options }: { options: string[] }) => (
+  <div className='flex flex-col gap-4 h-100'>
     {options.map((option) => (
-      <Option key={option} option={option} />
+      <OptionItem key={option} option={option} />
     ))}
   </div>
 );
 
-const FormNavFooter = ({ questionId, setQuestionIndex }: FooterProps) => {
+const Footer = ({ questionId, setQuestionIndex }: FooterProps) => {
   const findQuestionIndex = (id: string): number =>
     questions.findIndex((q) => q.id === id);
 
@@ -151,7 +156,6 @@ const FormNavFooter = ({ questionId, setQuestionIndex }: FooterProps) => {
           isDisabled={findQuestionIndex(questionId) === questions.length - 1}
           handleClick={() => {
             const index = findQuestionIndex(questionId);
-
             if (index === questions.length - 1) {
               // submit form
             } else {
@@ -177,27 +181,21 @@ function App() {
   });
 
   const question = questions?.[questionIndex];
-  const bgColor = `${
-    question ? backgroundConfig[question.bgColor] : 'bg-slate-200'
-  }`;
 
   return isLoading ? (
-    <FallbackDisplay text='Loading your data...' />
+    <CenteredElement>Loading your data...</CenteredElement>
   ) : isError ? (
-    <FallbackDisplay text='Error while fetching your data' />
+    <CenteredElement>Error while fetching your data</CenteredElement>
   ) : question ? (
-    <div className={`flex justify-center items-center h-screen ${bgColor}`}>
-      <div className='grid grid-cols-2 gap-4 w-200'>
+    <CenteredElement bgColor={backgroundConfig[question.bgColor]}>
+      <div className='grid grid-cols-2 gap-8 w-200'>
         <Question question={question.question} />
-        <Options options={question.options} />
-        <FormNavFooter
-          questionId={question.id}
-          setQuestionIndex={setQuestionIndex}
-        />
+        <OptionList options={question.options} />
+        <Footer questionId={question.id} setQuestionIndex={setQuestionIndex} />
       </div>
-    </div>
+    </CenteredElement>
   ) : (
-    <FallbackDisplay text='No questions have been added' />
+    <CenteredElement>No questions have been added</CenteredElement>
   );
 }
 

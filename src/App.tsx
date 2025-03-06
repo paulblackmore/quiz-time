@@ -21,6 +21,12 @@ type ButtonProps = {
   label: string;
 };
 
+type QuestionProps = Pick<QuestionType, 'question'>;
+type OptionsListProps = Pick<QuestionType, 'options'>;
+type CenteredProps = { bgColor?: string };
+type OptionItemProps = { option: string };
+type BgColorProps = { [key: string]: string };
+
 const questions: QuestionType[] = [
   {
     id: uuid(),
@@ -74,7 +80,7 @@ const questions: QuestionType[] = [
   },
 ];
 
-const bgColorConfig: { [key: string]: string } = {
+const bgColorConfig: BgColorProps = {
   blue: 'bg-blue-800',
   green: 'bg-green-800',
   slate: 'bg-slate-800',
@@ -98,7 +104,7 @@ const fetchQuestions = (): Promise<QuestionType[]> => {
 const CenteredElement = ({
   children,
   bgColor = 'bg-pink-400',
-}: PropsWithChildren<{ bgColor?: string }>) => (
+}: PropsWithChildren<CenteredProps>) => (
   <div className={`flex justify-center items-center h-screen ${bgColor}`}>
     {children}
   </div>
@@ -110,13 +116,13 @@ const Button = ({ isDisabled, handleClick, label }: ButtonProps) => (
   </button>
 );
 
-const Question = ({ question }: { question: string }) => (
+const Question = ({ question }: QuestionProps) => (
   <div className='h-100'>
     <h3 className='font-bold text-3xl'>{question}</h3>
   </div>
 );
 
-const OptionItem = ({ option }: { option: string }) => (
+const OptionItem = ({ option }: OptionItemProps) => (
   <div className='flex justify-between items-center'>
     <label htmlFor={option} className='text-lg'>
       {option}
@@ -125,7 +131,7 @@ const OptionItem = ({ option }: { option: string }) => (
   </div>
 );
 
-const OptionsList = ({ options }: { options: string[] }) => (
+const OptionsList = ({ options }: OptionsListProps) => (
   <div className='flex flex-col gap-4 h-100'>
     {options.map((option) => (
       <OptionItem key={option} option={option} />

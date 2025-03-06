@@ -14,7 +14,7 @@ type Props = {
   question: Question | undefined;
 };
 
-type FormNavigationButtonsProps = {
+type FormNavigationSectionProps = {
   questionId: string | undefined;
   setQuestionIndex: (index: number) => void;
 };
@@ -114,11 +114,20 @@ const NoQuestions = () => (
 );
 
 const Question = ({ children, question }: PropsWithChildren<Props>) => {
+  const backgroundConfig: { [key: string]: string } = {
+    blue: 'bg-blue-500',
+    green: 'bg-green-500',
+    yellow: 'bg-yellow-500',
+    orange: 'bg-orange-500',
+    purple: 'bg-purple-500',
+  };
+  const bgColor = `${
+    question ? backgroundConfig[question.bgColor] : 'bg-slate-200'
+  }`;
+
   return question ? (
-    <div
-      className={`flex justify-center items-center h-screen bg-linear-to-br from-${question.bgColor}-500 to-slate-200`}
-    >
-      <div className='grid grid-cols-2 gap-4 h-100 w-200'>
+    <div className={`flex justify-center items-center h-screen ${bgColor}`}>
+      <div className='grid grid-cols-2 gap-4 w-200'>
         <div className='h-100 p-10'>
           <h3 className='font-bold text-3xl'>{question.question}</h3>
         </div>
@@ -141,10 +150,10 @@ const NavigationButton = ({
   </button>
 );
 
-const FormNavigationButtons = ({
+const FormNavigationSection = ({
   questionId,
   setQuestionIndex,
-}: FormNavigationButtonsProps) => {
+}: FormNavigationSectionProps) => {
   const findQuestionIndex = (id: string): number =>
     questions.findIndex((q) => q.id === id);
 
@@ -188,23 +197,19 @@ function App() {
     queryFn: fetchQuestions,
   });
 
-  return (
-    <div>
-      {isLoading ? (
-        <Loading />
-      ) : isError ? (
-        <Error />
-      ) : questions && questions.length ? (
-        <Question question={questions[questionIndex]}>
-          <FormNavigationButtons
-            questionId={questions[questionIndex].id}
-            setQuestionIndex={setQuestionIndex}
-          />
-        </Question>
-      ) : (
-        <NoQuestions />
-      )}
-    </div>
+  return isLoading ? (
+    <Loading />
+  ) : isError ? (
+    <Error />
+  ) : questions?.length ? (
+    <Question question={questions[questionIndex]}>
+      <FormNavigationSection
+        questionId={questions[questionIndex].id}
+        setQuestionIndex={setQuestionIndex}
+      />
+    </Question>
+  ) : (
+    <NoQuestions />
   );
 }
 

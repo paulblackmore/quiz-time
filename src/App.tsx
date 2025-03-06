@@ -10,7 +10,7 @@ type QuestionType = {
   bgColor: string;
 };
 
-type FormNavFooterProps = {
+type FooterProps = {
   questionId: string;
   setQuestionIndex: (index: number) => void;
 };
@@ -51,14 +51,14 @@ const questions: QuestionType[] = [
       'To define a function',
     ],
     answer: 'To refer to the current object',
-    bgColor: 'yellow',
+    bgColor: 'slate',
   },
   {
     id: uuid(),
     question: 'In which HTML tag do we put the JavaScript code?',
     options: ['<js>', '<scripting>', '<script>', '<javascript>'],
     answer: '<script>',
-    bgColor: 'orange',
+    bgColor: 'red',
   },
   {
     id: uuid(),
@@ -75,11 +75,11 @@ const questions: QuestionType[] = [
 ];
 
 const backgroundConfig: { [key: string]: string } = {
-  blue: 'bg-blue-500',
-  green: 'bg-green-500',
-  yellow: 'bg-yellow-500',
-  orange: 'bg-orange-500',
-  purple: 'bg-purple-500',
+  blue: 'bg-blue-800',
+  green: 'bg-green-800',
+  slate: 'bg-slate-800',
+  red: 'bg-red-800',
+  purple: 'bg-purple-800',
 };
 
 const fetchQuestions = (): Promise<QuestionType[]> => {
@@ -132,10 +132,7 @@ const Options = ({ options }: { options: string[] }) => (
   </div>
 );
 
-const FormNavFooter = ({
-  questionId,
-  setQuestionIndex,
-}: FormNavFooterProps) => {
+const FormNavFooter = ({ questionId, setQuestionIndex }: FooterProps) => {
   const findQuestionIndex = (id: string): number =>
     questions.findIndex((q) => q.id === id);
 

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { v4 as uuid } from 'uuid';
 import { useQuery } from '@tanstack/react-query';
 
-type Question = {
+type QuestionType = {
   id: string;
   question: string;
   options: string[];
@@ -10,7 +10,7 @@ type Question = {
   bgColor: string;
 };
 
-type FormNavFooter = {
+type FormNavFooterProps = {
   questionId: string;
   setQuestionIndex: (index: number) => void;
 };
@@ -21,7 +21,7 @@ type ButtonProps = {
   label: string;
 };
 
-const questions: Question[] = [
+const questions: QuestionType[] = [
   {
     id: uuid(),
     question: 'What does CSS stand for?',
@@ -82,8 +82,8 @@ const backgroundConfig: { [key: string]: string } = {
   purple: 'bg-purple-500',
 };
 
-const fetchQuestions = () => {
-  return new Promise<Question[]>((resolve, reject) => {
+const fetchQuestions = (): Promise<QuestionType[]> => {
+  return new Promise<QuestionType[]>((resolve, reject) => {
     const req = new XMLHttpRequest();
     req.open('GET', '');
     req.onload = () => {
@@ -116,19 +116,11 @@ const Question = ({ question }: { question: string }) => (
 );
 
 const Option = ({ option }: { option: string }) => (
-  <div className='flex items-center'>
-    <input
-      id={option}
-      type='checkbox'
-      value=''
-      className='w-6 h-6 rounded-sm'
-    />
-    <label
-      htmlFor={option}
-      className='ms-2 text-sm font-medium text-gray-900 dark:text-gray-300'
-    >
+  <div className='flex  justify-between items-center'>
+    <label htmlFor={option} className='ms-2 text-lg'>
       {option}
     </label>
+    <input id={option} type='checkbox' className='w-6 h-6 rounded-sm' />
   </div>
 );
 
@@ -140,7 +132,10 @@ const Options = ({ options }: { options: string[] }) => (
   </div>
 );
 
-const FormNavFooter = ({ questionId, setQuestionIndex }: FormNavFooter) => {
+const FormNavFooter = ({
+  questionId,
+  setQuestionIndex,
+}: FormNavFooterProps) => {
   const findQuestionIndex = (id: string): number =>
     questions.findIndex((q) => q.id === id);
 

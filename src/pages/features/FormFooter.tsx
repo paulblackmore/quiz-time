@@ -3,7 +3,7 @@ import { Button } from '../../components/Button';
 type Props = {
   questionCount: number;
   currentIndex: number;
-  setCurrentIndex: (callback: (currentIndex: number) => number) => void;
+  setCurrentIndex: (cb: (currentIndex: number) => number) => void;
 };
 
 export const FormFooter = ({

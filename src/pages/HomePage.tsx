@@ -1,11 +1,9 @@
 import { useState } from 'react';
-import { CenteredElement } from '../components/CenteredElement';
-import { Text } from '../components/Text';
-import { Question } from './features/Question';
-import { OptionsList } from './features/OptionsList';
-import { FormFooter } from './features/FormFooter';
 import { useFetchQuestions } from './hooks';
-import { bgColorConfig } from '../utils';
+import { Loading } from '../components/Loading';
+import { Error } from '../components/Error';
+import { QuestionNotFound } from './features/QuestionNotFound';
+import { QuestionSection } from './features/QuestionSection';
 
 export const HomePage = () => {
   const { data: questions, isLoading, isError } = useFetchQuestions();
@@ -15,28 +13,17 @@ export const HomePage = () => {
   const questionCount = questions?.length || 0;
 
   return isLoading ? (
-    <CenteredElement>
-      <Text>Loading your data...</Text>
-    </CenteredElement>
+    <Loading />
   ) : isError ? (
-    <CenteredElement>
-      <Text>Error while fetching your data</Text>
-    </CenteredElement>
+    <Error />
   ) : currentQuestion ? (
-    <CenteredElement bgColor={bgColorConfig[currentQuestion.bgColor]}>
-      <div className='grid grid-cols-2 gap-8 w-200'>
-        <Question question={currentQuestion.question} />
-        <OptionsList options={currentQuestion.options} />
-        <FormFooter
-          questionCount={questionCount}
-          currentIndex={currentIndex}
-          setCurrentIndex={setCurrentIndex}
-        />
-      </div>
-    </CenteredElement>
+    <QuestionSection
+      questionCount={questionCount}
+      currentIndex={currentIndex}
+      setCurrentIndex={setCurrentIndex}
+      currentQuestion={currentQuestion}
+    />
   ) : (
-    <CenteredElement>
-      <Text>Sorry, question can not be found</Text>
-    </CenteredElement>
+    <QuestionNotFound />
   );
 };

@@ -11,7 +11,8 @@ type QuestionType = {
 };
 
 type FormFooterProps = {
-  questionId: string;
+  questionCount: number;
+  questionIndex: number;
   setQuestionIndex: (index: number) => void;
 };
 
@@ -101,6 +102,13 @@ const fetchQuestions = (): Promise<QuestionType[]> => {
   });
 };
 
+const useFetchQuestions = () => {
+  return useQuery({
+    queryKey: ['questions'],
+    queryFn: fetchQuestions,
+  });
+};
+
 const CenteredElement = ({
   children,
   bgColor = 'bg-pink-400',
@@ -118,7 +126,7 @@ const Button = ({ isDisabled, handleClick, label }: ButtonProps) => (
 
 const Question = ({ question }: QuestionProps) => (
   <div className='h-100'>
-    <h3 className='font-bold text-3xl'>{question}</h3>
+    <h3 className='font-bold text-5xl/16'>{question}</h3>
   </div>
 );
 
@@ -139,27 +147,24 @@ const OptionsList = ({ options }: OptionsListProps) => (
   </div>
 );
 
-const FormFooter = ({ questionId, setQuestionIndex }: FormFooterProps) => {
-  const findQuestionIndex = (id: string): number =>
-    questions.findIndex((q) => q.id === id);
-
+const FormFooter = ({
+  questionCount,
+  questionIndex,
+  setQuestionIndex,
+}: FormFooterProps) => {
   return (
     <div className='col-span-2'>
       <div className='flex justify-between items-center'>
         <Button
-          isDisabled={findQuestionIndex(questionId) === 0}
-          handleClick={() => {
-            const index = findQuestionIndex(questionId);
-            setQuestionIndex(index - 1);
-          }}
+          isDisabled={questionIndex === 0}
+          handleClick={() => setQuestionIndex(questionIndex - 1)}
           label='Back'
         />
         <Button
-          isDisabled={findQuestionIndex(questionId) === questions.length - 1}
+          isDisabled={questionIndex === questionCount - 1}
           handleClick={() => {
-            const index = findQuestionIndex(questionId);
-            if (index === questions.length - 1) return; // submit form
-            else setQuestionIndex(index + 1);
+            if (questionIndex === questionCount - 1) return; // submit form
+            else setQuestionIndex(questionIndex + 1);
           }}
           label='Next'
         />
@@ -169,16 +174,8 @@ const FormFooter = ({ questionId, setQuestionIndex }: FormFooterProps) => {
 };
 
 export default function App() {
-  const [questionIndex, setQuestionIndex] = useState(0);
-  const {
-    data: questions,
-    isLoading,
-    isError,
-  } = useQuery({
-    queryKey: ['questions'],
-    queryFn: fetchQuestions,
-  });
-
+  const { data: questions, isLoading, isError } = useFetchQuestions();
+  const [questionIndex, setQuestionIndex] = useState<number>(0);
   const question = questions?.[questionIndex];
 
   return isLoading ? (
@@ -191,7 +188,8 @@ export default function App() {
         <Question question={question.question} />
         <OptionsList options={question.options} />
         <FormFooter
-          questionId={question.id}
+          questionCount={questions.length}
+          questionIndex={questionIndex}
           setQuestionIndex={setQuestionIndex}
         />
       </div>

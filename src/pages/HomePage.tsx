@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { CenteredElement } from '../components/CenteredElement';
-import { CenteredText } from '../components/CenteredText';
+import { Text } from '../components/Text';
 import { Question } from './features/Question';
 import { OptionsList } from './features/OptionsList';
 import { FormFooter } from './features/FormFooter';
@@ -10,16 +10,17 @@ import { bgColorConfig } from '../utils';
 export const HomePage = () => {
   const { data: questions, isLoading, isError } = useFetchQuestions();
   const [currentIndex, setCurrentIndex] = useState<number>(0);
+
   const currentQuestion = questions?.[currentIndex];
   const questionCount = questions?.length || 0;
 
   return isLoading ? (
     <CenteredElement>
-      <CenteredText>Loading your data...</CenteredText>
+      <Text>Loading your data...</Text>
     </CenteredElement>
   ) : isError ? (
     <CenteredElement>
-      <CenteredText>Error while fetching your data</CenteredText>
+      <Text>Error while fetching your data</Text>
     </CenteredElement>
   ) : currentQuestion ? (
     <CenteredElement bgColor={bgColorConfig[currentQuestion.bgColor]}>
@@ -35,7 +36,7 @@ export const HomePage = () => {
     </CenteredElement>
   ) : (
     <CenteredElement>
-      <CenteredText>Sorry, question can not be found</CenteredText>
+      <Text>Sorry, question can not be found</Text>
     </CenteredElement>
   );
 };

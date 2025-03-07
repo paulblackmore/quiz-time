@@ -11,14 +11,14 @@ export const FormFooter = ({
   currentIndex,
   setCurrentIndex,
 }: Props) => {
-  const isFrirstQuestion = currentIndex === 0;
+  const isFirstQuestion = currentIndex === 0;
   const isLastQuestion = currentIndex === questionCount - 1;
 
   return (
     <div className='col-span-2'>
       <div className='flex justify-between items-center'>
         <Button
-          isDisabled={isFrirstQuestion}
+          isDisabled={isFirstQuestion}
           handleClick={() => setCurrentIndex((index: number) => index - 1)}
           label='Back'
         />

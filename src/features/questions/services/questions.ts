@@ -1,5 +1,5 @@
-import { questions } from '../data/dummy-questions';
-import { QuestionType } from '../types';
+import { questions } from '../../../data';
+import { QuestionType } from '../../../types/question';
 
 export const fetchQuestions = (): Promise<QuestionType[]> => {
   return new Promise<QuestionType[]>((resolve, reject) => {

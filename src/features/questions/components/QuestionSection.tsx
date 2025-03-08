@@ -1,9 +1,9 @@
-import { CenteredElement } from '../../components/CenteredElement';
+import { CenteredElement } from '../../../components/CenteredElement';
 import { Question } from './Question';
 import { OptionsList } from './OptionsList';
 import { FormFooter } from './FormFooter';
-import { bgColorConfig } from '../../utils';
-import { QuestionType } from '../../types';
+import { bgColorConfig } from '../../../utils/background-color';
+import { QuestionType } from '../../../types';
 
 type Props = {
   currentQuestion: QuestionType;

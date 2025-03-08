@@ -1,4 +1,4 @@
-import { QuestionType } from '../../types';
+import { QuestionType } from '../../../types';
 import { OptionItem } from './OptionItem';
 
 type Props = Pick<QuestionType, 'options'>;

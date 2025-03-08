@@ -1,9 +1,11 @@
 import { useState } from 'react';
-import { useFetchQuestions } from './hooks';
+import { useFetchQuestions } from '../features/questions/hooks';
 import { Loading } from '../components/Loading';
 import { Error } from '../components/Error';
-import { QuestionNotFound } from './features/QuestionNotFound';
-import { QuestionSection } from './features/QuestionSection';
+import {
+  QuestionNotFound,
+  QuestionSection,
+} from '../features/questions/components';
 
 export const HomePage = () => {
   const { data: questions, isLoading, isError } = useFetchQuestions();

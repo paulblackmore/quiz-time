@@ -1,5 +1,5 @@
-import { CenteredElement } from '../../components/CenteredElement';
-import { Text } from '../../components/Text';
+import { CenteredElement } from '../../../components/CenteredElement';
+import { Text } from '../../../components/Text';
 
 export const QuestionNotFound = () => (
   <CenteredElement>

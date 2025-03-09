@@ -6,6 +6,7 @@ import { Button } from '../../../components/Button';
 import { QuestionType } from '../../../types';
 import { ErrorBanner } from '../../../components/ErrorBanner';
 import { SuccessBanner } from '../../../components/SuccessBanner';
+import { useEffect } from 'react';
 
 const quizSchema = z
   .object({
@@ -62,6 +63,7 @@ export const QuestionForm = ({
     control,
     rules: {
       minLength: questions.length,
+      required: true,
     },
   });
 
@@ -69,10 +71,19 @@ export const QuestionForm = ({
     console.log('submitted data', data);
   };
 
+  useEffect(() => {
+    if (errors.results?.length) {
+      const index = (errors.results as { answer?: string }[]).findIndex(
+        (result) => result?.answer
+      );
+      setCurrentIndex(index);
+    }
+  }, [errors, setCurrentIndex]);
+
   return (
     <form className='grid grid-cols-2 gap-8 w-200'>
       {errors.results?.[currentIndex]?.answer ? (
-        <ErrorBanner>Please select an answer</ErrorBanner>
+        <ErrorBanner>You must select an answer</ErrorBanner>
       ) : null}
       {isSubmitSuccessful ? (
         <SuccessBanner>Thanks for taking the quiz</SuccessBanner>
@@ -114,6 +125,7 @@ export const QuestionForm = ({
                   answer: '',
                 });
               } else {
+                console.log('submitted');
                 handleSubmit(onSubmit)();
               }
             }}

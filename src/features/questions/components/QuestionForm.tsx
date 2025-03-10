@@ -25,7 +25,6 @@ type Inputs = z.infer<typeof quizSchema>;
 
 type Props = {
   currentIndex: number;
-  currentQuestion: QuestionType;
   questions: QuestionType[];
   setCurrentIndex: React.Dispatch<React.SetStateAction<number>>;
 };
@@ -34,7 +33,6 @@ export const QuestionForm = ({
   currentIndex,
   setCurrentIndex,
   questions,
-  currentQuestion,
 }: Props) => {
   const isFirstQuestion = currentIndex === 0;
   const isLastQuestion = currentIndex === questions.length - 1;
@@ -49,9 +47,9 @@ export const QuestionForm = ({
     defaultValues: {
       results: [
         {
-          id: currentQuestion.id,
-          question: currentQuestion.question,
-          options: currentQuestion.options,
+          id: questions[currentIndex].id,
+          question: questions[currentIndex].question,
+          options: questions[currentIndex].options,
           answer: '',
         },
       ],
@@ -125,7 +123,6 @@ export const QuestionForm = ({
                   answer: '',
                 });
               } else {
-                console.log('submitted');
                 handleSubmit(onSubmit)();
               }
             }}

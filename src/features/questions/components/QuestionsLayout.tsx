@@ -8,14 +8,12 @@ import { QuestionForm } from './QuestionForm';
 export const QuestionsLayout = () => {
   const { data: questions = [] } = useFetchQuestions();
   const [currentIndex, setCurrentIndex] = useState<number>(0);
-  const currentQuestion = questions[currentIndex];
 
   return questions.length ? (
-    <CenteredElement bgColor={bgColorConfig[currentQuestion.bgColor]}>
+    <CenteredElement bgColor={bgColorConfig[questions[currentIndex].bgColor]}>
       <QuestionForm
         questions={questions}
         currentIndex={currentIndex}
-        currentQuestion={currentQuestion}
         setCurrentIndex={setCurrentIndex}
       />
     </CenteredElement>
